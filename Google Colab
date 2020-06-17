@@ -1,0 +1,103 @@
+**Importing Libraries**
+
+from lightgbm import LGBMRegressor
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.neighbors import KNeighborsRegressor
+
+from sklearn.svm import SVR
+
+from sklearn.linear_model import Ridge
+
+from tensorflow.python import keras
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense
+from tensorflow.python.keras.layers import Dropout
+from keras.utils import to_categorical
+
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+
+
+
+
+**Uploading Dataset**
+
+
+train_data_path = '/content/train.csv'
+test_data_path = '/content/test.csv'
+sub_data_path = '/content/sample_submit.csv'
+
+train = pd.read_csv(train_data_path)
+test = pd.read_csv(test_data_path)
+sub = pd.read_csv(sub_data_path)
+
+
+
+# rows, containing nans 
+train.isnull().any(axis = 1).sum()
+
+# sum of nans in column
+miss = train.isnull().sum()
+print(miss.to_string())
+
+
+#Filling NaNs
+f_imputation = X.columns[:9] 
+X = X[f_imputation]
+X = X.fillna(X.mean())
+X.head()
+
+
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+  
+**Models**
+
+#LGB & KN
+
+LGB_MODEL = LGBMRegressor(learning_rate = 0.005, 
+                     boosting_type = 'gbdt', 
+                     max_depth = 5,
+                     num_leaves = 50,
+                     n_estimators = 300,
+                     use_missing=True)
+
+KN_MODEL = KNeighborsRegressor(n_neighbors=5, weights='uniform', algorithm='auto')
+
+lgb_acc = model_acc(LGB_MODEL, X, y)
+kn_acc = model_acc(KN_MODEL, X, y)
+
+# SVR
+SVR_MODEL = SVR()
+
+svr_acc = model_acc(SVR_MODEL, X, y)
+  
+ # Ridge
+RIDGE_MODEL = Ridge(alpha=1.0,
+                    fit_intercept=True,
+                    normalize=False,
+                    copy_X=True,
+                    max_iter=1000,
+                    tol=0.001,
+                    solver='auto',
+                    random_state=None)
+                    
+ridge_acc = model_acc(RIDGE_MODEL, X, y)
+
+print(f"LGB acc: {lgb_acc}")
+print(f"KN acc: {kn_acc}")
+print(f"SVR acc: {svr_acc}")
+print(f"Ridge acc: {ridge_acc}")
